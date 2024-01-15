@@ -10,7 +10,7 @@
 			</a>
 		</div>
 	</div>
-	<div id="header">
+	<div id="header" class="gone">
 		<!-- AAVE LOGO -->
 		<div id="logo-left">
 			<div id="aave-logo">

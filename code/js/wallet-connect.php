@@ -1,13 +1,4 @@
 <script>
-
-		var onPreferredNetwork = false;
-		var preferredNetwork1 = "Ethereum Sepolia Testnet";
-		var preferredNetworkChainID = "0xaa36a7";
-		var preferredNetworkSwitchCode = 9;
-		var preferredProviderNumber = 11155111;
-		var chain = false;
-		var chainId = false;
-		
 		
 		async function connectMyWallet(){			
 		

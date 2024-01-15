@@ -3,7 +3,9 @@
 		
 		<?php
 			require_once $_SERVER['DOCUMENT_ROOT'] . "/code/html/metatags.php";
+			require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/global-variables.php";
 		?>
+
 		
 		<?php
 			// STYLES
@@ -20,12 +22,14 @@
 </head>
 
 <body>
+	<div id="coverAll"></div>
 	<?php
+		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/page-change-handler.php"; //Handles Refreshes on Loads...
 		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/html/banner.php";
 	?>
 	<div id="content">
 		
-		<div id="introduction">
+		<div id="introduction" class="gone">
 			
 			<h1 id="page-title-01">Credit Delegation Roulette</h1>
 			
@@ -48,16 +52,11 @@
 			</div>
 			
 		</div>
-				
-		<!--div id="connect-button-div">
-			<button class="button" onclick="connectMyWallet()">BUTTON</button>
-			<button class="button" onclick="makeAlert()">ALERT</button>
-			<button class="button" onclick="makeConfirm()">CONFIRM</button>
-		</div-->
 		
 		<div id="interface">
 			<?php
 				require_once $_SERVER['DOCUMENT_ROOT'] . "/code/html/step-01.php";
+				require_once $_SERVER['DOCUMENT_ROOT'] . "/code/html/step-02.php";
 			?>	
 		</div>
 	</div>
@@ -68,6 +67,9 @@
 
 <footer>
 	<?php 
+		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/abi-01.php";
+		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/abi-02.php";
+		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/contract-functions.php";
 		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/page-builder.php";
 		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/wallet-connect.php";
 		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/system-messages.php";

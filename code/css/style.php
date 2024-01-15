@@ -22,7 +22,18 @@
 		max-width: 100%;
 		height: auto;
 	}
-	
+	#coverAll {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: 100vw;
+		height: 100vh;
+		margin: 0;
+		padding: 0;
+		background: rgb(27, 32, 48);
+		z-index: 9999;
+		opacity: 1;
+	}
 	/******************************************
 					HEADER CSS
 	*******************************************/
@@ -139,6 +150,9 @@
 	#page-title-02{
 		margin-top: 4px;
 	}
+	#page-title-03{
+		margin-top: 4px;
+	}
 	.text-box-white{
 		background-color: #FFFFFF;
 		color: #303549;
@@ -172,6 +186,19 @@
 		
 		margin-bottom:20px;
 	}
+	.text-box-white-02{
+		background-color: #FFFFFF;
+		color: #303549;
+			-webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+		transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+		border-radius: 4px;
+		box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+		border-radius: 4px;
+		box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.05), 0px 0px 1px rgba(0, 0, 0, 0.25);
+		padding: 16px;
+		padding-bottom: 28px;
+		margin-bottom:20px;
+	}
 	.txt-box-heading{
 		margin-bottom: 10px;
 		font-size: 1.1em;
@@ -198,6 +225,61 @@
 	h3{
 		margin-block-start: .8em;
 		margin-block-end: .8em;
+	}
+	#player-status-div{
+		display: flex;
+		justify-content: center;
+	}
+	.pStatusItem{
+		max-height: 200px;
+		margin: .5em 1em;
+	}
+	.pStatusItem img{
+		max-height: 200px;
+		
+	}
+	#connected-as-02{
+		margin-top: 72px;
+	}
+	#gameShareLink{
+		display: flex;
+		justify-content: center;
+		text-align: center;
+		margin-top: 16px;
+	}
+	#linkToGame{
+		margin: .2em 0;
+		font-size: 1.5em;
+	}
+	#gameShareLinkDiv{
+		width: 50%;
+		background-color: #FFFFFF;
+		color: #303549;
+			-webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+		transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+		border-radius: 4px;
+		box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+		border-radius: 4px;
+		box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.05), 0px 0px 1px rgba(0, 0, 0, 0.25);
+		padding: 8px;
+		padding-bottom: 8px;
+		margin-bottom:6px;
+		border-style: solid;
+		border-color: rgba(183,80,159,0.0);
+		opacity: .5;
+		
+	}
+	#gameShareLinkDiv:hover{
+		-webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+		transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+		opacity: 1;
+		border-color: rgba(183,80,159,1);
+		
+	}
+	#copy-status{
+		text-align: center;
+		display: flex;
+		justify-content: center;
 	}
 	/******************************************
 					INPUT CSS
@@ -351,6 +433,12 @@
 		font-size: 3em;
 		margin: -0.5em 0 0 .5em;
 	}
+	input[type=checkbox] {
+		transform: scale(1.5);
+	}
+	#lock-player-in-div{
+		min-height: 60px;
+	}
 	/******************************************
 				SYSTEM MESSAGE BOXES CSS
 	*******************************************/
@@ -389,6 +477,7 @@
 		font-size: 2.25em;
 		font-weight: 700;
 		margin: 2em;
+		text-align: center;
 	}
 	.sysMsgBoxBody{
 		margin: 2em;
@@ -400,6 +489,18 @@
 	}
 	#confirmBox{
 		display: none;
+	}
+	#miningInfoBox{
+		display: none;
+		background: #FFFFFF;
+	}
+	#miningInfoLoadingWheelDiv{
+		max-height: 350px;
+		z-index: -100;
+	}
+	#miningInfoLoadingWheelDiv img{
+		max-height: 350px;
+		z-index: -99;
 	}
 	.sysMsgBoxButtons{
 		position: absolute;
