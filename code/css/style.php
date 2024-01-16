@@ -232,6 +232,7 @@
 	}
 	.pStatusItem{
 		max-height: 200px;
+		min-width: 200px;
 		margin: .5em 1em;
 	}
 	.pStatusItem img{
@@ -490,6 +491,9 @@
 	#confirmBox{
 		display: none;
 	}
+	#inputBox{
+		display: none;
+	}
 	#miningInfoBox{
 		display: none;
 		background: #FFFFFF;
@@ -501,6 +505,15 @@
 	#miningInfoLoadingWheelDiv img{
 		max-height: 350px;
 		z-index: -99;
+	}
+	#eth-input-field{
+		margin-bottom: 3em;
+	}
+	#eth-input{
+		width: 20%;
+		height: 2em;
+		font-size: 1.75em;
+		padding: .5em;
 	}
 	.sysMsgBoxButtons{
 		position: absolute;

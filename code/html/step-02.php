@@ -8,6 +8,7 @@
 				<h3>Step 2 of 3</h3>
 				<div class="step-num-title-div">
 					<h2>Lock In Players</h2>
+					<div style="text-align:right; font-size: 1.1em; font-weight: 700;"><span style="color:green">Payment Address:</span> <span id="payment-address-span"></span></div>
 				</div>
 			
 				<!-- Get Ready Player -->
@@ -29,7 +30,7 @@ against their collateral on AAVE and send it to the payment address.
 				
 				<!-- Initialize Game Button -->
 				<div id="lock-player-in-div" class="center-button-div">
-					<button id="lock-player-button" class="invisible button largeButton" onclick="joinPlayer()">Join Game</button>
+					<button id="lock-player-button" class="invisible button largeButton" onclick="checkPlayer()">Join Game</button>
 				</div>
 				
 				

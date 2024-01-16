@@ -11,6 +11,10 @@
 		setMiningBoxMsg(which, data);
 		showMiningBoxBox();
 	}
+	function popInputBox(which){
+		setInputBoxMsg(which);
+		showInputBox();
+	}
 	//These Control Visibility of System Message Boxes
 	function showAlertBox(){
 		document.getElementById("sysMsgBoxBG").style.display = "block";
@@ -39,6 +43,24 @@
 			//Add Sepolia
 			switchNetwork(9);
 		}
+		else if (which == 5){
+			popInputBox(1); //Post collateral
+		}
+		else if (which == 6){
+			popAlert(7); //Do not Post collateral
+		}
+	}
+	function showInputBox(){
+		document.getElementById("sysMsgBoxBG").style.display = "block";
+		document.getElementById("inputBox").style.display = "block";
+	}
+	function closeInputBox(which){
+		if (which == 1){
+			var ethValue = document.getElementById('eth-input').value;	
+			depositETHintoAAVE(ethValue);
+		}
+		document.getElementById("sysMsgBoxBG").style.display = "none";
+		document.getElementById("inputBox").style.display = "none";
 	}
 	function showMiningBoxBox(){
 		document.getElementById("sysMsgBoxBG").style.display = "block";
@@ -95,6 +117,11 @@
 			title.innerHTML = "Request Waiting";
 			body.innerHTML = "You already have a pending network change request. Check your wallet.";
 		}
+		//Dont post collateral
+		else if (num == 7){
+			title.innerHTML = "Denied Posting Collateral";
+			body.innerHTML = "Ok well you cannot join this game until you have sufficient collateral to cover the transaction value.";
+		}
 	}
 	function setConfirmMsg(num){
 		var title = document.getElementById("confirmBoxTitle");
@@ -118,6 +145,29 @@
 			body.innerHTML = `You must add the ${preferredNetwork1} to your wallet to play this game. Would you like to do that now?`;
 			button.innerHTML = `<button class='button sysMsgButton' onclick="closeConfirm(4)">Yes</button><button class='button sysMsgButton' onclick="closeConfirm(3)">No</button>`;
 		}
+		else if (num == 4){
+			title.innerHTML = "Add Collateral?";
+			body.innerHTML = `<strong>You do not have sufficient collateral</strong> in the Aave protocol to cover the transaction costs in the event that you lose the game. Would you like to <strong>deposit some ETH</strong>?`;
+			button.innerHTML = `<button class='button sysMsgButton' onclick="closeConfirm(5)">Yes</button><button class='button sysMsgButton' onclick="closeConfirm(6)">No</button>`;
+		}
+	}
+	
+	function setInputBoxMsg(which){
+		var title = document.getElementById("inputBoxTitle");
+		var body = document.getElementById("inputBoxBody");
+		var button = document.getElementById("inputBoxButtons");
+		
+		if (which == 1){
+			title.innerHTML = "Deposit ETH";
+			body.innerHTML = `<strong>How much ETH</strong> would you like to <strong>deposit</strong> into the <strong>AAVE</strong> lending pool?`;
+			button.innerHTML = `
+				<div id="eth-input-field">
+					<input id="eth-input" class="input-field" type="number" min="0.01" step="0.01" max="99999999" value="0.10" />
+				</div>
+				<div id="eth-submit-button">
+					<button class='button sysMsgButton' onclick="closeInputBox(1)">OK</button>
+				</div>`;
+		}
 	}
 	function setMiningBoxMsg(num, data){
 		var title = document.getElementById("miningInfoBoxTitle");
@@ -130,7 +180,7 @@
 			var slicedObj = data.slice(0, 10);
 			slicedObj += "...";
 			var link = "https://sepolia.etherscan.io/tx/" + data;
-			body.innerHTML = `You are now setting up the game. The game contract will hold the number of players, the value of the game, and the destination address of the payment. <br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> is mining.`;
+			body.innerHTML = `You are now setting up the game. The game contract will hold the <strong>number of players</strong>, the <strong>value</strong> of the game, and the destination <strong>address of the payment</strong>. <br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> is mining.`;
 			loadingWheel.innerHTML = loader;
 		}
 		else if (num == 2){
@@ -146,7 +196,7 @@
 			var slicedObj = data.slice(0, 10);
 			slicedObj += "...";
 			var link = "https://sepolia.etherscan.io/tx/" + data;
-			body.innerHTML = `Game contract must be able to borrow $$[transactionValue} against your collateral in the event you lose the game.<br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> is mining.`;
+			body.innerHTML = `Game <strong>contract must be able to borrow $${transactionValue}</strong> against your collateral in the event you lose the game. You are approving this action.<br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> is mining.`;
 			loadingWheel.innerHTML = loader;
 		}
 		else if (num == 4){
@@ -154,7 +204,7 @@
 			slicedObj += "...";
 			var link = "https://sepolia.etherscan.io/tx/" + data.blockHash;
 			title.innerHTML = "Credit Delegation Successful!";
-			body.innerHTML = `Transaction <a href='${link}' target='_blank'>${slicedObj}</a> successfully mined!<br/><br/>You have delegated your borrowing power to the game contract. You are ready to play the game.`;
+			body.innerHTML = `Transaction <a href='${link}' target='_blank'>${slicedObj}</a> successfully mined!<br/><br/>You have <strong>delegated your borrowing power</strong> to the game contract. You are ready to play the game.`;
 			loadingWheel.innerHTML = loaded;
 		}
 		else if (num == 5){
@@ -162,7 +212,7 @@
 			var slicedObj = data.slice(0, 10);
 			slicedObj += "...";
 			var link = "https://sepolia.etherscan.io/tx/" + data;
-			body.innerHTML = `You are now joining the game. Once all the players have joined, we can determine the results.<br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> is mining.`;
+			body.innerHTML = `You are now <strong>joining the game</strong>. Once all the players have joined, we can determine the results.<br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> is mining.`;
 			loadingWheel.innerHTML = loader;
 		}
 		else if (num == 6){
@@ -171,6 +221,22 @@
 			var link = "https://sepolia.etherscan.io/tx/" + data.blockHash;
 			title.innerHTML = "Game Joined!";
 			body.innerHTML = `You have now joined the game.<br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> successfully mined!`;
+			loadingWheel.innerHTML = loaded;
+		}
+		else if (num == 7){
+			title.innerHTML = "Depositing Collateral to AAVE";
+			var slicedObj = data.slice(0, 10);
+			slicedObj += "...";
+			var link = "https://sepolia.etherscan.io/tx/" + data;
+			body.innerHTML = `You are now <strong>depositing collateral</strong> to AAVE. You are required to have sufficient collateral to cover the transaction amount in the event that you lose the game.<br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> is mining.`;
+			loadingWheel.innerHTML = loader;
+		}
+		else if (num == 8){
+			var slicedObj = data.blockHash.slice(0, 10);
+			slicedObj += "...";
+			var link = "https://sepolia.etherscan.io/tx/" + data.blockHash;
+			title.innerHTML = "Collateral Deposited!";
+			body.innerHTML = `You have <strong>deposited collateral</strong> to AAVE. You may now <strong>try to join the game again</strong>.<br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> successfully mined!`;
 			loadingWheel.innerHTML = loaded;
 		}
 	}

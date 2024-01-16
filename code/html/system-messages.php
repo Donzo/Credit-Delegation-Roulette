@@ -14,6 +14,13 @@
 				<div id="sysConfirmButtonDiv"></div>
 			</div>
 		</div>
+		<div class="sysMsgBox" id="inputBox">
+			<div class="sysMsgBoxTitle" id="inputBoxTitle"></div>
+			<div class="sysMsgBoxBody" id="inputBoxBody"></div>
+			<div class="sysMsgBoxButtons" id="inputBoxButtons">
+				<div id="sysInputButtonDiv"></div>
+			</div>
+		</div>
 		<div class="sysMsgBox" id="miningInfoBox">
 			<div class="sysMsgBoxTitle" id="miningInfoBoxTitle"></div>
 			<div class="sysMsgBoxBody" id="miningInfomBoxBody"></div>

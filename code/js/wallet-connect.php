@@ -14,7 +14,7 @@
 					popAlert(3); //Request Pending / Check Wallet
 				}
 				else{
-					alert('Something is wrong with your wallet.');
+					console.log('Something is wrong with your wallet.');
 				}
 				return;
 			}

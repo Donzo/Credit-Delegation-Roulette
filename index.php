@@ -52,6 +52,12 @@
 			</div>
 			
 		</div>
+				
+		<!--div id="connect-button-div">
+			<button class="button" onclick="connectMyWallet()">BUTTON</button>
+			<button class="button" onclick="makeAlert()">ALERT</button>
+			<button class="button" onclick="makeConfirm()">CONFIRM</button>
+		</div-->
 		
 		<div id="interface">
 			<?php
@@ -69,6 +75,8 @@
 	<?php 
 		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/abi-01.php";
 		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/abi-02.php";
+		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/abi-03.php";
+		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/abi-04.php";
 		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/contract-functions.php";
 		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/page-builder.php";
 		require_once $_SERVER['DOCUMENT_ROOT'] . "/code/js/wallet-connect.php";

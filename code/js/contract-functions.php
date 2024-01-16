@@ -1,21 +1,6 @@
 <script>
-		//Player Status IMGS
-		var p1NotReadyIMG = "/images/p-ready-imgs/p1-not-ready.png";
-		var p1ReadyIMG = "/images/p-ready-imgs/p1-ready.png";
-		var p2NotReadyIMG = "/images/p-ready-imgs/p2-not-ready.png";
-		var p2ReadyIMG = "/images/p-ready-imgs/p2-ready.png";
-		var p3NotReadyIMG = "/images/p-ready-imgs/p3-not-ready.png";
-		var p3ReadyIMG = "/images/p-ready-imgs/p3-ready.png";
-		var p4NotReadyIMG = "/images/p-ready-imgs/p4-not-ready.png";
-		var p4ReadyIMG = "/images/p-ready-imgs/p4-ready.png";
-		var p5NotReadyIMG = "/images/p-ready-imgs/p5-not-ready.png";
-		var p5ReadyIMG = "/images/p-ready-imgs/p5-ready.png";
-		var p1Ready = false;
-		var p2Ready = false;
-		var p3Ready = false;
-		var p4Ready = false;
-		var p5Ready = false;
 		
+		//Function To Set Initial Parameters of the Game in the Smartcontract
 		async function initalizeGame(){
 			let web3 = new Web3(Web3.givenProvider);
 			var contract = new web3.eth.Contract(abi1, initGameAddress, {});
@@ -30,7 +15,7 @@
 				popMiningBox(1, hash);
 			}).on('receipt', function(receipt){
 				console.log(receipt);
-				if (receipt.events.GameSettingInit && receipt.events.GameSettingInit.returnValues) { //GameSettingInit contract name
+				if (receipt.events.GameSettingInit && receipt.events.GameSettingInit.returnValues){ //GameSettingInit contract name
 					newGMID = receipt.events.GameSettingInit.returnValues.gameID;
 					console.log(newGMID);
 					popMiningBox(2, receipt);
@@ -38,59 +23,11 @@
 				}
 			}).on('error', console.error);
 		}
-		async function joinPlayer(){
-			let web3 = new Web3(Web3.givenProvider);
-			var contract = new web3.eth.Contract(abi2, aGhoDebtTokenContractAddress, {});
-			
-			var borrowingPower = await contract.methods.borrowAllowance(window['userAccountNumber'], initGameAddress).call();
-			transactionValue;
-			console.log('borrowingPower = ' + borrowingPower);
-			console.log('transactionValue = ' + transactionValue);
-			if (borrowingPower < transactionValue){
-				approveBorrowingDelegation();
-			}
-			else{
-				joinGame();
-			}
-		}
-		async function joinGame(){
-			let web3 = new Web3(Web3.givenProvider);
-			var contract = new web3.eth.Contract(abi1, initGameAddress, {});
-			
-			var tValue = processNumberForContract(transactionValue);
-			
-			await contract.methods.readyPlayer(theGameID).send({
-				from: window['userAccountNumber'],
-			}).on('transactionHash', function(hash){
-				myHash = hash;
-				console.log(hash);
-				popMiningBox(5, hash);
-			}).on('receipt', function(receipt){
-				popMiningBox(6, receipt);
-				setTimeout("closeMiningBoxBox()", 3000); //Close Mining Box
-				
-			}).on('error', console.error);
-		}
-		async function approveBorrowingDelegation(){
-			let web3 = new Web3(Web3.givenProvider);
-			var contract = new web3.eth.Contract(abi2, aGhoDebtTokenContractAddress, {});
-			
-			console.log('transactionValue = ' + transactionValue);
-			var tValue = processNumberForContract(transactionValue);
-			console.log('tValue = ' + tValue);
-			await contract.methods.approveDelegation(initGameAddress, tValue).send({
-				from: window['userAccountNumber'],
-			}).on('transactionHash', function(hash){
-				myHash = hash;
-				console.log(hash);
-				popMiningBox(3, hash);
-			}).on('receipt', function(receipt){
-				console.log(receipt);
-				popMiningBox(4, receipt);
-				setTimeout("closeMiningBoxBox()", 3000); //Close Mining Box
-				setTimeout("joinPlayer()", 1000); //Join Game
-			}).on('error', console.error);
-		}
+		
+		//If user is on Step 2 of the game,
+		//There will be a URL parameter "gameID"
+		//This is used to retrieve mapped values from the game contract.
+		//There values are then loaded into the web page.
 		async function getGameData(gID){
 			let web3 = new Web3(Web3.givenProvider);
 			var contract = new web3.eth.Contract(abi1, initGameAddress, {});
@@ -111,129 +48,148 @@
 			transactionValue = processNumberForDisplay(transactionValue)
 			console.log("transactionValue: ", transactionValue);
 			//Payment Address
-			var pAddress = await contract.methods.game_pCount(gID).call();
-			console.log("pAddress: ", pAddress);
+			pymntAddress = await contract.methods.pymt_add(gID).call();
+			console.log("pymntAddress: " + pymntAddress);
 			
-			//Player 1 Ready
-			p1Ready = await contract.methods.p1_signed(gID).call();
-			console.log("p1ready: ", p1Ready);
-			
-			//Player 2 Ready
-			p2Ready = await contract.methods.p2_signed(gID).call();
-			console.log("p2ready: ", p2Ready);
-			
-			//Player 3 Ready
-			p3Ready = await contract.methods.p3_signed(gID).call();
-			console.log("p3ready: ", p3Ready);
-			
-			//Player 1 Ready
-			p4Ready = await contract.methods.p4_signed(gID).call();
-			console.log("p4ready: ", p4Ready);
-			
-			//Player 5 Ready
-			p5Ready = await contract.methods.p5_signed(gID).call();
-			console.log("p5ready: ", p5Ready);
+			lookForPlayers(gID);
 			setGameDescDiv();
 			setPlayerStatusDiv();
-		}
-		function setGameDescDiv(){
-			var againstThisMany = playerCount - 1;
-			document.getElementById('tb-pCount').innerHTML = againstThisMany;
-			document.getElementById('tb-tAmount').innerHTML = transactionValue;
-			document.getElementById('tb-dAddress').innerHTML = pAddress;		
-		}
-		function setPlayerStatusDiv(){
-
-			var p1sIcon = `<div id="p1Status" class="pStatusItem"><img src="${p1NotReadyIMG}"></div>`;
-			if (p1Ready){
-				p1sIcon = `<div id="p1Status" class="pStatusItem"><img src="${p1ReadyIMG}"></div>`;
-			}
-			var p2sIcon = `<div id="p2Status" class="pStatusItem"><img src="${p2NotReadyIMG}"></div>`;
-			if (p2Ready){
-				p2sIcon = `<div id="p2Status" class="pStatusItem"><img src="${p2ReadyIMG}"></div>`;
-			}
-			var p3sIcon = `<div id="p3Status" class="pStatusItem"><img src="${p3NotReadyIMG}"></div>`;
-			if (p3Ready){
-				p3sIcon = `<div id="p3Status" class="pStatusItem"><img src="${p3ReadyIMG}"></div>`;
-			}
-			var p4sIcon = `<div id="p4Status" class="pStatusItem"><img src="${p4NotReadyIMG}"></div>`;
-			if (p4Ready){
-				p4sIcon= `<div id="p4Status" class="pStatusItem"><img src="${p4ReadyIMG}"></div>`;
-			}
-			var p5sIcon = `<div id="p5Status" class="pStatusItem"><img src="${p5NotReadyIMG}"></div>`;
-			if (p5Ready){
-				p5sIcon = `<div id="p5Status" class="pStatusItem"><img src="${p5ReadyIMG}"></div>`;
-			}
 			
-			var stati = p1sIcon + p2sIcon;
+			//We also set an Interval Function
+			//To look for new players every 15 seconds 
+			var lookForPlayersInterval = setInterval(async function(){
+				var allPlayersReady = await lookForPlayers(theGameID);
+				if (allPlayersReady){
+					clearInterval(lookForPlayersInterval);
+					console.log("All players are ready.");
+					document.getElementById("ready-player-button").innerHTML = "Play Game";
+					document.getElementById("ready-player-button").disabled = false;
+					document.getElementById("pStatusHdrTxt").innerHTML = "<strong>Players Ready!</strong>";
+					
+				}
+				else{
+					console.log("Waiting on players...");
+				}
+			}, /*7777*/ 15000);
 			
-			if (playerCount > 2){
-				stati += p3sIcon;
-			}
-			if (playerCount > 3){
-				stati += p4sIcon;
-			}
-			if (playerCount > 4){
-				stati += p5sIcon;
-			}
-			document.getElementById('player-status-div').innerHTML = stati;
 		}
-		function processNumberForContract(num) {
-
-			var numParts = num.toString().split('.');
-	
-			var zerosToAdd;
+		
+		//Called from Step2 Button, 
+		//Begins series of checks to verify player can fulfill obligations.
+		async function checkPlayer(){
+			getUserMaxCredit();
+		}
+		
+		//Part of obligation checks.
+		async function getUserDelgationAmount(){
+			let web3 = new Web3(Web3.givenProvider);
+			var contract = new web3.eth.Contract(abi2, aGhoDebtTokenContractAddress, {});
 			
-			if (!numParts[1]) {
-				//No decimal place
-				num = num * 100;
-				zerosToAdd = 16; //Add 16 zeros
-			}
-			else if (numParts[1].length === 1) {
-				//One digit after decimal
-				num = num * 10;
-				zerosToAdd = 17; //Add 17 zeros
+			var delegatedAmount = await contract.methods.borrowAllowance(window['userAccountNumber'], initGameAddress).call();
+			var tValue = processNumberForContract(transactionValue);
+			console.log('delegatedAmount = ' + delegatedAmount);
+			console.log('tValue = ' + tValue);
+			
+			//If user has delegated LESS to this contract than required, request credit delegation.
+			if (delegatedAmount < tValue){
+				approveBorrowingDelegation();
 			}
 			else{
-				num = Math.floor(num * 100) / 100;
-				zerosToAdd = 16; //Add 16 zeros
+				joinGame();
 			}
-
-			var noDecimal = Math.floor(num * 100);
-			var addedZeros = noDecimal * Math.pow(10, zerosToAdd);
-			var resultStr = addedZeros.toString();
-
-			return resultStr;
 		}
-		function processNumberForDisplay(num) {
-			if (isNaN(num)) {
-				console.error("Invalid input: not a number");
-				return null;
+		
+		//Part of obligation checks.
+		async function getUserMaxCredit(){
+			
+			let web3 = new Web3(Web3.givenProvider);
+			var contract = new web3.eth.Contract(abi3, aavePoolContractAddress, {});
+			
+			//Max Credit Power? (based on collateral)
+			var usrAcctData = await contract.methods.getUserAccountData(window['userAccountNumber']).call();
+			userMaxCredit = usrAcctData.availableBorrowsBase;
+			console.log("userMaxCredit = " + userMaxCredit);
+			var tValue = processNumberForContract(transactionValue);
+			//User Has Enough Collateral
+			if (userMaxCredit > tValue){
+				//Step 2 - Check to see contract has been delegated appropriate amount
+				getUserDelgationAmount();
 			}
-
-			var numStr = num.toString();
-
-			var requiredLength = numStr.length >= 18 ? numStr.length : 18;
-			numStr = numStr.padStart(requiredLength, '0');
-
-			var decimalPosition = numStr.length - 18;
-			var withDecimal = numStr.slice(0, decimalPosition) + "." + numStr.slice(decimalPosition);
-
-			var number = parseFloat(withDecimal);
-			var formattedNumber;
-
-			if (number <= 0.01) {
-				formattedNumber = number.toString();
-			}
+			//Prompt a Collateral Deposit
 			else{
-				formattedNumber = number.toFixed(2);
+				popConfirm(4);
 			}
-			return formattedNumber;
+			
 		}
+		
+		//Part of obligation checks.
+		async function approveBorrowingDelegation(){
+			let web3 = new Web3(Web3.givenProvider);
+			var contract = new web3.eth.Contract(abi2, aGhoDebtTokenContractAddress, {});
+			
+			console.log('transactionValue = ' + transactionValue);
+			var tValue = processNumberForContract(transactionValue);
+			console.log('tValue = ' + tValue);
 
-		function reloadPage(){
-			if (newGMID){
-				window.location.href = "https://cdroulette.com/?gameID=" + newGMID;
-			}
+			await contract.methods.approveDelegation(initGameAddress, tValue).send({
+				from: window['userAccountNumber'],
+			}).on('transactionHash', function(hash){
+				myHash = hash;
+				console.log(hash);
+				popMiningBox(3, hash);
+			}).on('receipt', function(receipt){
+				console.log(receipt);
+				popMiningBox(4, receipt);
+				setTimeout("closeMiningBoxBox()", 3000); //Close Mining Box
+				setTimeout("joinGame()", 1000); //Join Game
+			}).on('error', console.error);
 		}
+		
+		//Deposits ETH into AAVE if user needs more collateral
+		async function depositETHintoAAVE(amount){
+			if (!amount){
+				console.log('no eth sent');
+				return;
+			}
+			var amount = amount.toString();
+		    amount	= amount.replace('.', '');
+		    amount = amount + '0000000000000000'; // Append zeros
+
+			let web3 = new Web3(Web3.givenProvider);
+			var contract = new web3.eth.Contract(abi4, wethGatewayContractAddress, {});
+			var ethSepoliaAaveTknPoolAddress = "0x5b071b590a59395fE4025A0Ccc1FcC931AAc1830";
+			await contract.methods.depositETH(ethSepoliaAaveTknPoolAddress, window['userAccountNumber'], 0).send({
+				from: window['userAccountNumber'],
+				value: amount
+				//value: web3.toWei(1, "ether"), 
+			}).on('transactionHash', function(hash){
+				myHash = hash;
+				console.log(hash);
+				popMiningBox(7, hash);
+			}).on('receipt', function(receipt){
+				popMiningBox(8, receipt);
+				setTimeout("closeMiningBoxBox()", 3000); //Close Mining Box
+				setTimeout("checkPlayer()", 3200); //Try to join again
+				
+			}).on('error', console.error);
+		}
+		async function joinGame(){
+			let web3 = new Web3(Web3.givenProvider);
+			var contract = new web3.eth.Contract(abi1, initGameAddress, {});
+			
+			var tValue = processNumberForContract(transactionValue);
+			
+			await contract.methods.readyPlayer(theGameID).send({
+				from: window['userAccountNumber'],
+			}).on('transactionHash', function(hash){
+				myHash = hash;
+				console.log(hash);
+				popMiningBox(5, hash);
+			}).on('receipt', function(receipt){
+				popMiningBox(6, receipt);
+				setTimeout("closeMiningBoxBox()", 3000); //Close Mining Box
+				
+			}).on('error', console.error);
+		}
+		
 	</script>

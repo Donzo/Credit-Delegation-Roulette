@@ -83,22 +83,30 @@
 		
 	}
 	async function isConnected() {
-		const accounts = await ethereum.request({method: 'eth_accounts'});	   
-		if (theGameID){
-			getGameData(theGameID);
-		}
-		if (accounts.length) {
-			console.log(`You're connected to: ${accounts[0]}`);
-			window['userAccountNumber'] = accounts[0];
-			clearCover();
+		var accounts = false;
+		
+		try {
+			accounts = await ethereum.request({method: 'eth_accounts'});
 			if (theGameID){
-				document.getElementById("coverAll").style.display = "block";
+				getGameData(theGameID);
+			}
+			if (accounts.length) {
+				console.log(`You're connected to: ${accounts[0]}`);
+				window['userAccountNumber'] = accounts[0];
+				clearCover();
+				if (theGameID){
+					document.getElementById("coverAll").style.display = "block";
+				}
+			}
+			else{
+				console.log("Wallet not connected");
+				clearCover();
 			}
 		}
-		else{
-			console.log("Metamask is not connected");
+		catch(error){
+			console.log("Wallet not connected");
 			clearCover();
-		}
+		}		
 	}
 	isConnected();
 
@@ -224,4 +232,155 @@
 	}
 	//Add event listener to the div for click event
 	document.getElementById('gameLinkShareBox').addEventListener('click', copyGameLinkToClipboard);
+	
+	function setGameDescDiv(){
+			var againstThisMany = playerCount - 1;
+			document.getElementById('tb-pCount').innerHTML = againstThisMany;
+			document.getElementById('tb-tAmount').innerHTML = transactionValue;
+			document.getElementById('tb-dAddress').innerHTML = pymntAddress;
+			document.getElementById('payment-address-span').innerHTML = pymntAddress;		
+		}
+		function setPlayerStatusDiv(){
+
+			var p1sIcon = `<div id="p1Status" class="pStatusItem"><img src="${p1NotReadyIMG}"></div>`;
+			if (p1Ready){
+				p1sIcon = `<div id="p1Status" class="pStatusItem"><img src="${p1ReadyIMG}"></div>`;
+			}
+			var p2sIcon = `<div id="p2Status" class="pStatusItem"><img src="${p2NotReadyIMG}"></div>`;
+			if (p2Ready){
+				p2sIcon = `<div id="p2Status" class="pStatusItem"><img src="${p2ReadyIMG}"></div>`;
+			}
+			var p3sIcon = `<div id="p3Status" class="pStatusItem"><img src="${p3NotReadyIMG}"></div>`;
+			if (p3Ready){
+				p3sIcon = `<div id="p3Status" class="pStatusItem"><img src="${p3ReadyIMG}"></div>`;
+			}
+			var p4sIcon = `<div id="p4Status" class="pStatusItem"><img src="${p4NotReadyIMG}"></div>`;
+			if (p4Ready){
+				p4sIcon= `<div id="p4Status" class="pStatusItem"><img src="${p4ReadyIMG}"></div>`;
+			}
+			var p5sIcon = `<div id="p5Status" class="pStatusItem"><img src="${p5NotReadyIMG}"></div>`;
+			if (p5Ready){
+				p5sIcon = `<div id="p5Status" class="pStatusItem"><img src="${p5ReadyIMG}"></div>`;
+			}
+			
+			var stati = p1sIcon + p2sIcon;
+			
+			if (playerCount > 2){
+				stati += p3sIcon;
+			}
+			if (playerCount > 3){
+				stati += p4sIcon;
+			}
+			if (playerCount > 4){
+				stati += p5sIcon;
+			}
+			document.getElementById('player-status-div').innerHTML = stati;
+		}
+		/*8 decimals*/
+		function processNumberForContract(num){
+			var numParts = num.toString().split('.');
+	
+			var zerosToAdd;
+			
+			if (!numParts[1]){
+				//No decimal place
+				num = num * 100;
+				zerosToAdd = 6;
+			}
+			else if (numParts[1].length === 1){
+				num = num * 10;
+				zerosToAdd = 7;
+			}
+			else{
+				num = Math.floor(num * 100) / 100;
+				zerosToAdd = 6; //Add 6 zeros for 8 decimal places
+			}
+
+			var noDecimal = Math.floor(num * 100);
+
+			var addedZeros = noDecimal * Math.pow(10, zerosToAdd);
+
+			var resultStr = addedZeros.toString();
+
+			return resultStr;
+		}
+
+		//Turn 8 decimal smart contract returned values back into human readable money values
+		function processNumberForDisplay(num){
+			if (isNaN(num)){
+				console.error("Invalid input: not a number");
+				return null;
+			}
+
+			var numStr = num.toString();
+
+			var requiredLength = numStr.length >= 8 ? numStr.length : 8;
+			numStr = numStr.padStart(requiredLength, '0');
+
+			var decimalPosition = numStr.length - 8;
+			var withDecimal = numStr.slice(0, decimalPosition) + "." + numStr.slice(decimalPosition);
+
+			var number = parseFloat(withDecimal);
+			var formattedNumber;
+
+			if (number <= 0.01){
+				formattedNumber = number.toString();
+			}
+			else{
+				formattedNumber = number.toFixed(2);
+			}
+			return formattedNumber;
+		}
+
+		async function lookForPlayers(gID){
+						  
+			let web3 = new Web3(Web3.givenProvider);
+			var contract = new web3.eth.Contract(abi1, initGameAddress, {});
+
+			//Player 1 Ready
+			if (!p1Ready && playerCount > 0){
+				p1Ready = await contract.methods.p1_signed(gID).call();
+				console.log("p1ready: ", p1Ready);
+			}
+			
+			//Player 2 Ready
+			if (!p2Ready && playerCount > 1){
+				p2Ready = await contract.methods.p2_signed(gID).call();
+				console.log("p2ready: ", p2Ready);
+			}
+			
+			//Player 3 Ready
+			if (!p3Ready && playerCount > 2){
+				p3Ready = await contract.methods.p3_signed(gID).call();
+				console.log("p3ready: ", p3Ready);
+			}
+			
+			//Player 4 Ready
+			if (!p4Ready && playerCount > 3){
+				p4Ready = await contract.methods.p4_signed(gID).call();
+				console.log("p4ready: ", p4Ready);
+			}
+			
+			//Player 5 Ready
+			if (!p5Ready && playerCount > 4){
+				p5Ready = await contract.methods.p5_signed(gID).call();
+				console.log("p5ready: ", p5Ready);
+			}
+			
+			
+			var allPlayersReady = p1Ready && (playerCount <= 1 || p2Ready) && 
+				(playerCount <= 2 || p3Ready) && 
+				(playerCount <= 3 || p4Ready) && 
+				(playerCount <= 4 || p5Ready);
+			
+			setPlayerStatusDiv();
+			
+			return allPlayersReady;
+		}
+		function reloadPage(){
+			if (newGMID){
+				window.location.href = "https://cdroulette.com/?gameID=" + newGMID;
+			}
+		}
+	
 </script>
