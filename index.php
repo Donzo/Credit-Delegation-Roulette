@@ -63,6 +63,7 @@
 			<?php
 				require_once $_SERVER['DOCUMENT_ROOT'] . "/code/html/step-01.php";
 				require_once $_SERVER['DOCUMENT_ROOT'] . "/code/html/step-02.php";
+				require_once $_SERVER['DOCUMENT_ROOT'] . "/code/html/step-03.php";
 			?>	
 		</div>
 	</div>

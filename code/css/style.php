@@ -147,10 +147,7 @@
 	#page-title-01{
 		margin-top: 32px;
 	}
-	#page-title-02{
-		margin-top: 4px;
-	}
-	#page-title-03{
+	#page-title-02, #page-title-03, #page-title-04{
 		margin-top: 4px;
 	}
 	.text-box-white{
@@ -239,7 +236,7 @@
 		max-height: 200px;
 		
 	}
-	#connected-as-02{
+	#connected-as-02, #connected-as-03{
 		margin-top: 72px;
 	}
 	#gameShareLink{
@@ -281,6 +278,24 @@
 		text-align: center;
 		display: flex;
 		justify-content: center;
+	}
+	#gResultsBody{
+		font-size: 1.2em;
+	}
+	#gStatusHdrTxt{
+		font-size: 1.5em;
+	}
+	#end-game-report-div{
+		color: #f1f1f3;
+		background-image: linear-gradient(#2eb9c7, #b7509f);
+		border-radius: 4px;
+		box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+		border-radius: 4px;
+		box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.05), 0px 0px 1px rgba(0, 0, 0, 0.25);
+		padding: 16px;
+		padding-bottom: 16px;
+		margin-bottom:16px;
+		font-size: 1.05em;
 	}
 	/******************************************
 					INPUT CSS
@@ -446,7 +461,7 @@
 	#sysMsgBoxBG{
 		position: absolute;
 		top: 0;
-		height: 100%;
+		height: 150%;
 		left: 0;
 		width: 100%;
 		background: #000000;
@@ -499,11 +514,11 @@
 		background: #FFFFFF;
 	}
 	#miningInfoLoadingWheelDiv{
-		max-height: 350px;
+		max-height: 300px;
 		z-index: -100;
 	}
 	#miningInfoLoadingWheelDiv img{
-		max-height: 350px;
+		max-height: 300px;
 		z-index: -99;
 	}
 	#eth-input-field{

@@ -49,6 +49,19 @@
 		else if (which == 6){
 			popAlert(7); //Do not Post collateral
 		}
+		else if (which == 7){
+			approveBorrowingDelegation(); //Delegate Credit to Game Contract
+		}
+		else if (which == 8){
+			popAlert(8); //Do not Post collateral
+		}
+		else if (which == 9){
+			joinGame(); //Join Game
+		}
+		else if (which == 10){
+			popAlert(9); //Do not Post collateral
+		}
+				
 	}
 	function showInputBox(){
 		document.getElementById("sysMsgBoxBG").style.display = "block";
@@ -122,6 +135,16 @@
 			title.innerHTML = "Denied Posting Collateral";
 			body.innerHTML = "Ok well you cannot join this game until you have sufficient collateral to cover the transaction value.";
 		}
+		//Dont Delegate
+		else if (num == 8){
+			title.innerHTML = "Denied Delegating Credit";
+			body.innerHTML = "Ok well you cannot join this game until you have delegated sufficient borrowing power to the game contract.";
+		}
+		//Dont join
+		else if (num == 9){
+			title.innerHTML = "Denied Joining Game";
+			body.innerHTML = "Ok well you can join the game whenever you want. Just press the 'Join Game' button.";
+		}
 	}
 	function setConfirmMsg(num){
 		var title = document.getElementById("confirmBoxTitle");
@@ -149,6 +172,17 @@
 			title.innerHTML = "Add Collateral?";
 			body.innerHTML = `<strong>You do not have sufficient collateral</strong> in the Aave protocol to cover the transaction costs in the event that you lose the game. Would you like to <strong>deposit some ETH</strong>?`;
 			button.innerHTML = `<button class='button sysMsgButton' onclick="closeConfirm(5)">Yes</button><button class='button sysMsgButton' onclick="closeConfirm(6)">No</button>`;
+		}
+		else if (num == 5){
+			title.innerHTML = "Delegate Credit?";
+			body.innerHTML = `You must <strong>delegate credit to the game contract</strong> to cover the transaction value in the event that you lose the game. Would you like to <strong>delegate credit now</strong>?`;
+			button.innerHTML = `<button class='button sysMsgButton' onclick="closeConfirm(7)">Yes</button><button class='button sysMsgButton' onclick="closeConfirm(8)">No</button>`;
+		}
+		else if (num == 6){
+			title.innerHTML = "Join Game?";
+			body.innerHTML = `You are now <strong>ready to join the game</strong>. Would you like to <strong>sign the transaction</strong> to join the game?`;
+			button.innerHTML = `<button class='button sysMsgButton' onclick="closeConfirm(9)">Yes</button><button class='button sysMsgButton' onclick="closeConfirm(10)">No</button>`;
+		
 		}
 	}
 	
@@ -222,6 +256,10 @@
 			title.innerHTML = "Game Joined!";
 			body.innerHTML = `You have now joined the game.<br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> successfully mined!`;
 			loadingWheel.innerHTML = loaded;
+			
+			//Player is locked make the checkbox and button disappear:
+			document.getElementById('agreeToPlayCB').disabled = true;
+			makeDisappear("lock-player-button", 1);
 		}
 		else if (num == 7){
 			title.innerHTML = "Depositing Collateral to AAVE";
@@ -237,6 +275,43 @@
 			var link = "https://sepolia.etherscan.io/tx/" + data.blockHash;
 			title.innerHTML = "Collateral Deposited!";
 			body.innerHTML = `You have <strong>deposited collateral</strong> to AAVE. You may now <strong>try to join the game again</strong>.<br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> successfully mined!`;
+			loadingWheel.innerHTML = loaded;
+		}
+		else if (num == 9){
+			title.innerHTML = "Starting Game...";
+			var slicedObj = data.slice(0, 10);
+			slicedObj += "...";
+			var link = "https://sepolia.etherscan.io/tx/" + data;
+			body.innerHTML = `You are now <strong>starting the game</strong>. Once this transaction has mined, we will request a verifiably random number from a Chainlink DON.<br/><br/>Transaction <a href='${link}' target='_blank'>${slicedObj}</a> is mining.`;
+			loadingWheel.innerHTML = loader;
+		}
+		else if (num == 10){
+			var slicedObj = data.slice(0, 10);
+			slicedObj += "...";
+			title.innerHTML = "Game Started!";
+			body.innerHTML = `We have <strong>requested a random number</strong> from a Chainlink oracle network. It will take <strong>3 confirmations</strong> to return the results. Please be patient.<br/><br/><strong>Oracle Request ID ${slicedObj} sent!</strong>`;
+			//loadingWheel.innerHTML = loader;
+		}
+		else if (num == 11){
+			title.innerHTML = "Waiting for Oracle Return...";
+			var slicedObj = data.slice(0, 10);
+			slicedObj += "...";
+			body.innerHTML = `You are now <strong>starting the game</strong>. Once this transaction has mined, we will request a verifiably random number from a Chainlink DON.<br/><br/><strong>Oracle Request ${slicedObj} has been sent</strong>.`;
+			loadingWheel.innerHTML = loader;
+		}
+		else if (num == 12){
+			title.innerHTML = "Game Over";
+			body.innerHTML = `<strong>Player ${whichPlayerLost} lost</strong>. This player borrowed $${transactionValue} in GHO from AAVE and sent it to address ${pymntAddress}.<br/><br/><strong>Thank you for playing!</strong>`;
+			loadingWheel.innerHTML = loaded;
+		}
+		else if (num == 13){
+			title.innerHTML = "Game Started!";
+			body.innerHTML = `Another player has sent that transaction that began the game. The game contract has now <strong>requested a random number</strong> from a Chainlink oracle network. It will take <strong>3 confirmations</strong> to return the results. Please be patient.<br/><br/><strong>Oracle request sent!</strong>`;
+			loadingWheel.innerHTML = loader;
+		}
+		else if (num == 14){
+			title.innerHTML = "Game Over";
+			body.innerHTML = `<strong>Player ${whichPlayerLost} lost</strong>. This player borrowed $${transactionValue} in GHO from AAVE and sent it to address ${pymntAddress}.<br/><br/><strong>Thank you for playing!</strong>`;
 			loadingWheel.innerHTML = loaded;
 		}
 	}

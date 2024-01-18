@@ -55,18 +55,29 @@
 			document.getElementById("init-game-button").disabled = true;
 		}
 	}
-	function clearCover(){
+	function clearCover(endGame){
 		
 		var leaving = document.getElementById("coverAll");
 		var coming1 = document.getElementById("header");
 		var coming2 = document.getElementById("introduction");	
 		
 		//Page 2
-		if (window['userAccountNumber'] && theGameID){
+		if (endGame){
+			coming1 = document.getElementById("thin-header");
+			coming2 = document.getElementById("step-3");
+			if (window['userAccountNumber']){
+				document.getElementById("connected-as-address-03").innerHTML = window['userAccountNumber'];
+			}
+			else{
+				document.getElementById("connected-as-03").innerHTML = "";
+			}
+		}
+		else if (window['userAccountNumber'] && theGameID){
 			coming1 = document.getElementById("thin-header");
 			coming2 = document.getElementById("step-2");
 			//Set Connected Address
 			document.getElementById("connected-as-address-02").innerHTML = window['userAccountNumber'];
+			document.getElementById("connected-as-address-03").innerHTML = window['userAccountNumber'];
 			//Set Share Link URL
 			document.getElementById("linkToGame").innerHTML = window.location.href;
 		}			
@@ -93,9 +104,19 @@
 			if (accounts.length) {
 				console.log(`You're connected to: ${accounts[0]}`);
 				window['userAccountNumber'] = accounts[0];
-				clearCover();
 				if (theGameID){
 					document.getElementById("coverAll").style.display = "block";
+					didGameEnd = await isGameOver(theGameID);
+					if (didGameEnd){
+						getEndGameData(theGameID, true);
+						clearCover(true);
+					}
+					else{
+						clearCover();
+					}
+				}
+				else{
+					clearCover();
 				}
 			}
 			else{
@@ -132,6 +153,12 @@
 		}
 		else{
 			poofGone('introduction', 'step-1');	
+		}
+		
+		if (theGameID){
+			getGameData(theGameID);
+			//Set Share Link URL
+			document.getElementById("linkToGame").innerHTML = window.location.href;
 		}
 		
 	}
@@ -234,11 +261,26 @@
 	document.getElementById('gameLinkShareBox').addEventListener('click', copyGameLinkToClipboard);
 	
 	function setGameDescDiv(){
+			if (didGameEnd){
+				getEndGameData(theGameID, true);
+			}
 			var againstThisMany = playerCount - 1;
 			document.getElementById('tb-pCount').innerHTML = againstThisMany;
 			document.getElementById('tb-tAmount').innerHTML = transactionValue;
 			document.getElementById('tb-dAddress').innerHTML = pymntAddress;
-			document.getElementById('payment-address-span').innerHTML = pymntAddress;		
+			if (document.getElementById('tb-tAmount-02')){
+				document.getElementById('tb-tAmount-02').innerHTML = transactionValue;
+			}
+			if (document.getElementById('tb-dAddress-02')){
+				document.getElementById('tb-dAddress-02').innerHTML = pymntAddress;
+			}		
+			var pymntAddressLink = `<a href="https://sepolia.etherscan.io/address/${pymntAddress}" target="_blank">${pymntAddress}</a>`;
+			
+			document.getElementById('payment-address-span').innerHTML = pymntAddressLink;
+			if (document.getElementById('payment-address-span-02')){
+				document.getElementById('payment-address-span-02').innerHTML = pymntAddressLink;
+			}
+			
 		}
 		function setPlayerStatusDiv(){
 
@@ -279,29 +321,29 @@
 		/*8 decimals*/
 		function processNumberForContract(num){
 			var numParts = num.toString().split('.');
-	
+
 			var zerosToAdd;
-			
-			if (!numParts[1]){
-				//No decimal place
-				num = num * 100;
-				zerosToAdd = 6;
+
+			if (!numParts[1]) {
+				zerosToAdd = 8;
 			}
-			else if (numParts[1].length === 1){
+			else if (numParts[1].length === 1) {
 				num = num * 10;
 				zerosToAdd = 7;
 			}
 			else{
 				num = Math.floor(num * 100) / 100;
-				zerosToAdd = 6; //Add 6 zeros for 8 decimal places
+				zerosToAdd = 6;
+			}
+			if (numParts[1]) {
+				var noDecimal = Math.floor(num * 100);
+				num = noDecimal;
 			}
 
-			var noDecimal = Math.floor(num * 100);
-
-			var addedZeros = noDecimal * Math.pow(10, zerosToAdd);
+			var addedZeros = num * Math.pow(10, zerosToAdd);
 
 			var resultStr = addedZeros.toString();
-
+			console.log('resultStr = ' + resultStr)
 			return resultStr;
 		}
 
@@ -331,11 +373,35 @@
 			}
 			return formattedNumber;
 		}
+		function makeRegularNumberHave18DecimalPlaces(num){
+			var numParts = num.toString().split('.');
+	
+			var zerosToAdd;
+			if (!numParts[1]){
+				num = num * 100;
+				zerosToAdd = 16;
+			}
+			else if (numParts[1].length === 1){
+				num = num * 10;
+				zerosToAdd = 17;
+			}
+			else{
+				num = Math.floor(num * 100) / 100;
+				zerosToAdd = 16;
+			}
 
+			var noDecimal = Math.floor(num * 100);
+
+			var addedZeros = noDecimal * Math.pow(10, zerosToAdd);
+
+			var resultStr = addedZeros.toString();
+			//resultStr = resultStr.split('.').join("");
+			return resultStr;
+		}
 		async function lookForPlayers(gID){
 						  
 			let web3 = new Web3(Web3.givenProvider);
-			var contract = new web3.eth.Contract(abi1, initGameAddress, {});
+			var contract = new web3.eth.Contract(abi1, gameContractAddress, {});
 
 			//Player 1 Ready
 			if (!p1Ready && playerCount > 0){
@@ -376,6 +442,39 @@
 			setPlayerStatusDiv();
 			
 			return allPlayersReady;
+		}
+		function showGameResults(){
+			document.getElementById('gStatusHdrTxt').innerHTML = "<span style='font-weight:700'>Game Over</span>";
+			document.getElementById('gameResultsHdr').innerHTML = `Player ${whichPlayerLost} Lost`;
+			document.getElementById('gResultsBody').innerHTML = `${playerCount} players wagered to see who would send $${transactionValue} to address <a href='https://sepolia.etherscan.io/address/${pymntAddress}' target='_blank'>${pymntAddress}</a>.<br/><br/>Player ${whichPlayerLost} lost the wager and has borrowed that value in GHO against their collateral on AAVE.<br><br/><strong>Thank you! Play again soon.</strong>`;
+			document.getElementById('step-3-title-div').innerHTML = "<h2>Game Over</h2>";
+			document.getElementById('game-desc-txt').innerHTML =`
+			
+					<div class="centerTxt"><strong>Game Has Ended</strong></div>
+					<div>
+						Player ${whichPlayerLost} lost this game and borrowed ${transactionValue} in GHO then transfered it to <a href='https://sepolia.etherscan.io/address/${pymntAddress}' target='_blank'>${pymntAddress}</a>.
+					</div>`;			
+		}
+		async function isGameOver(gID){
+			let web3 = new Web3(Web3.givenProvider);
+			var contract = new web3.eth.Contract(abi1, gameContractAddress, {});
+
+			var hasGameEnded = await contract.methods.reqFulfilled(gID).call();
+			return hasGameEnded;
+		}
+		async function getEndGameData(gID, dontShowMiningBox){
+			let web3 = new Web3(Web3.givenProvider);
+			var contract = new web3.eth.Contract(abi1, gameContractAddress, {});
+
+			whichPlayerLost = await contract.methods.randNumb(gID).call();
+			showGameResults();
+			if (dontShowMiningBox){
+			
+			}
+			else{
+				popMiningBox(14);
+				setTimeout("closeMiningBoxBox()", 3000); //Close Mining Box
+			}
 		}
 		function reloadPage(){
 			if (newGMID){
