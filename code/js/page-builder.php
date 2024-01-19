@@ -35,7 +35,6 @@
 			pymAddressInput.className = "input-field redInput";
 			pymAddressDisp.className = "centerTxt redInput";
 		}
-		console.log(properlyFormattedAddressCheck(pymntAddress));
 		if (properlyFormattedAddressCheck(pymntAddress)){
 			pymAddressDisp.innerHTML = this.value + goodSymbol;
 		}
@@ -240,7 +239,6 @@
 		try {
 			var successful = document.execCommand('copy');
 			var msg = successful ? 'successful' : 'unsuccessful';
-			console.log('Copying text command was ' + msg);
 			document.getElementById('copy-status').style.color = "green";
 			document.getElementById('copy-status').innerHTML = "Copied Successfully!"
 			setTimeout("clearCopyStatusField()", 3000);
@@ -343,7 +341,6 @@
 			var addedZeros = num * Math.pow(10, zerosToAdd);
 
 			var resultStr = addedZeros.toString();
-			console.log('resultStr = ' + resultStr)
 			return resultStr;
 		}
 
@@ -406,31 +403,26 @@
 			//Player 1 Ready
 			if (!p1Ready && playerCount > 0){
 				p1Ready = await contract.methods.p1_signed(gID).call();
-				console.log("p1ready: ", p1Ready);
 			}
 			
 			//Player 2 Ready
 			if (!p2Ready && playerCount > 1){
 				p2Ready = await contract.methods.p2_signed(gID).call();
-				console.log("p2ready: ", p2Ready);
 			}
 			
 			//Player 3 Ready
 			if (!p3Ready && playerCount > 2){
 				p3Ready = await contract.methods.p3_signed(gID).call();
-				console.log("p3ready: ", p3Ready);
 			}
 			
 			//Player 4 Ready
 			if (!p4Ready && playerCount > 3){
 				p4Ready = await contract.methods.p4_signed(gID).call();
-				console.log("p4ready: ", p4Ready);
 			}
 			
 			//Player 5 Ready
 			if (!p5Ready && playerCount > 4){
 				p5Ready = await contract.methods.p5_signed(gID).call();
-				console.log("p5ready: ", p5Ready);
 			}
 			
 			
@@ -452,8 +444,16 @@
 			
 					<div class="centerTxt"><strong>Game Has Ended</strong></div>
 					<div>
-						Player ${whichPlayerLost} lost this game and borrowed ${transactionValue} in GHO then transfered it to <a href='https://sepolia.etherscan.io/address/${pymntAddress}' target='_blank'>${pymntAddress}</a>.
-					</div>`;			
+						Player ${whichPlayerLost} lost this game and borrowed $${transactionValue} in GHO then transfered it to <a href='https://sepolia.etherscan.io/address/${pymntAddress}' target='_blank'>${pymntAddress}</a>.
+					</div>
+					
+					&nbsp;
+					
+					<div>
+					
+						<strong>Did you use CCIP to transfer the funds to Arbitrum Sepolia?</strong><br/>Check on the transaction <a href='https://ccip.chain.link/address/0xff9627fe89f32997d65c7cb246a70a36fe56bed5' target='_blank'>here</a>.
+					</div>
+					`;			
 		}
 		async function isGameOver(gID){
 			let web3 = new Web3(Web3.givenProvider);

@@ -5,21 +5,22 @@
 			let web3 = new Web3(Web3.givenProvider);
 			var contract = new web3.eth.Contract(abi1, gameContractAddress, {});
 			
-			//console.log("1 transactionValue = " + transactionValue);
 			var tValue = processNumberForContract(transactionValue);
-			//console.log("2 tValue = " + tValue); //1 transactionValue = 1 tValue = 10000000000
 			
-			await contract.methods.initGameSettings(playerCount, tValue, pymntAddress ).send({
+			//Use CCIP if the Box is Checked
+			if (document.getElementById("ccipCheckBox").checked){
+				ccipTransfer = true;
+			}		
+			
+			
+			await contract.methods.initGameSettings(playerCount, tValue, pymntAddress, ccipTransfer ).send({
 				from: window['userAccountNumber'],
 			}).on('transactionHash', function(hash){
 				myHash = hash;
-				console.log(hash);
 				popMiningBox(1, hash);
 			}).on('receipt', function(receipt){
-				console.log(receipt);
 				if (receipt.events.GameSettingInit && receipt.events.GameSettingInit.returnValues){ //GameSettingInit contract name
 					newGMID = receipt.events.GameSettingInit.returnValues.gameID;
-					console.log(newGMID);
 					popMiningBox(2, receipt);
 					setTimeout("reloadPage()", 3000); //Reload Page
 				}
@@ -35,23 +36,16 @@
 			var contract = new web3.eth.Contract(abi1, gameContractAddress, {});
 			
 			//Is game already done?
-			var reqFulfilled = await contract.methods.reqFulfilled(gID).call();
-			console.log("reqFulfilled: ", reqFulfilled);
-			
+			var reqFulfilled = await contract.methods.reqFulfilled(gID).call();			
 			//Has request been made?
-			var reqMade = await contract.methods.gameToReqID(gID).call();
-			console.log("reqMade: ", reqMade);
-			
+			var reqMade = await contract.methods.gameToReqID(gID).call();			
 			//Player Number
 			playerCount = await contract.methods.game_pCount(gID).call();
-			console.log("playerCount: ", playerCount);
 			//Game Value
 			transactionValue = await contract.methods.game_value(gID).call();
 			transactionValue = processNumberForDisplay(transactionValue)
-			console.log("transactionValue: ", transactionValue);
 			//Payment Address
 			pymntAddress = await contract.methods.pymt_add(gID).call();
-			console.log("pymntAddress: " + pymntAddress);
 			
 			lookForPlayers(gID);
 			setGameDescDiv();
@@ -63,7 +57,6 @@
 				var allPlayersReady = await lookForPlayers(theGameID);
 				if (allPlayersReady){
 					clearInterval(lookForPlayersInterval);
-					console.log("All players are ready.");
 					document.getElementById("ready-player-button").innerHTML = "Play Game";
 					document.getElementById("ready-player-button").disabled = false;
 					document.getElementById("pStatusHdrTxt").innerHTML = "<strong>Players Ready!</strong>";
@@ -72,19 +65,15 @@
 					if (!didGameEnd){ //Dont start this if game is already over
 						checkGameStartedInterval = setInterval(async function() {
 							let gameStarted = await contract.methods.gameStarted(gID).call();
-							console.log("Game Started: ", gameStarted);
 							if (gameStarted && !gameOver) {
 								clearInterval(checkGameStartedInterval);
 								popMiningBox(13);
 								poofGone('step-2', 'step-3');
-								console.log("Game has started!");
 								//Start checking if the game has finished
 								checkGameFinishedInterval = setInterval(async function() {
 									let gameFinished = await contract.methods.reqFulfilled(gID).call();
-									console.log("Game Finished: ", gameFinished);
 									if (gameFinished) {
 										clearInterval(checkGameFinishedInterval);
-										console.log("Game has finished!");
 										gameOver = true;
 										getEndGameData(theGameID);
 									}
@@ -116,8 +105,6 @@
 			delegatedAmountBN = web3.utils.toBN(delegatedAmount);
 			var tValue = makeRegularNumberHave18DecimalPlaces(transactionValue);
 			tValue = web3.utils.toBN(tValue);
-			console.log('delegatedAmount = ' + delegatedAmount);
-			console.log('tValue = ' + tValue);
 			
 			//If user has delegated LESS to this contract than required, request credit delegation.
 			if (delegatedAmount < tValue){
@@ -137,9 +124,7 @@
 			//Max Credit Power? (based on collateral)
 			var usrAcctData = await contract.methods.getUserAccountData(window['userAccountNumber']).call();
 			userMaxCredit = usrAcctData.availableBorrowsBase;
-			console.log("userMaxCredit = " + userMaxCredit);
 			var scTValue = processNumberForContract(transactionValue);
-			console.log('scTValue = ' + scTValue);
 			//User Has Enough Collateral
 			if (parseFloat(userMaxCredit) > parseFloat(scTValue)){
 				//Step 2 - Check to see contract has been delegated appropriate amount
@@ -157,18 +142,14 @@
 			let web3 = new Web3(Web3.givenProvider);
 			var contract = new web3.eth.Contract(abi2, aGhoDebtTokenContractAddress, {});
 			
-			console.log('transactionValue = ' + transactionValue);
 			var tValue = makeRegularNumberHave18DecimalPlaces(transactionValue);
-			console.log('tValue = ' + tValue);
 
 			await contract.methods.approveDelegation(gameContractAddress, tValue).send({
 				from: window['userAccountNumber'],
 			}).on('transactionHash', function(hash){
 				myHash = hash;
-				console.log(hash);
 				popMiningBox(3, hash);
 			}).on('receipt', function(receipt){
-				console.log(receipt);
 				popMiningBox(4, receipt);
 				setTimeout("closeMiningBoxBox()", 3000); //Close Mining Box
 				popConfirm(6); // Prompt Game Join Transaction
@@ -194,7 +175,6 @@
 				//value: web3.toWei(1, "ether"), 
 			}).on('transactionHash', function(hash){
 				myHash = hash;
-				console.log(hash);
 				popMiningBox(7, hash);
 			}).on('receipt', function(receipt){
 				popMiningBox(8, receipt);
@@ -213,7 +193,6 @@
 				from: window['userAccountNumber'],
 			}).on('transactionHash', function(hash){
 				myHash = hash;
-				console.log(hash);
 				popMiningBox(5, hash);
 			}).on('receipt', function(receipt){
 				popMiningBox(6, receipt);
@@ -229,45 +208,35 @@
 				from: window['userAccountNumber'],
 			}).on('transactionHash', function(hash){
 				myHash = hash;
-				console.log(hash);
 				clearInterval(checkGameStartedInterval); //Clear interval checking if game has started
 				popMiningBox(9, hash);
-				console.log('9');
 			}).on('receipt', function(receipt){
-				console.log(receipt);
 				if (receipt.events.RequestSent && receipt.events.RequestSent.returnValues){ //GameSettingInit contract name
 					closeMiningBoxBox();
-					console.log('10');
 					oracleReqID = receipt.events.RequestSent.returnValues.requestId;
-					console.log(oracleReqID)
 					popMiningBox(10, oracleReqID);
 					poofGone('step-2', 'step-3');
 					checkForGameEnd();
 				}
 				if (receipt.events.RequestFulfilled && receipt.events.RequestFulfilled.returnValues){ //GameSettingInit contract name
 					whichPlayerLost = receipt.events.RequestFulfilled.returnValues.randomNum;
-					console.log(whichPlayerLost)
 					popMiningBox(12, receipt);
-					console.log('12');
 					setTimeout("closeMiningBoxBox()", 3000); //Transition
 					showGameResults();
 				}
 			}).on('error', console.error);
 		}
 		function checkForGameEnd(){
-			console.log('checking for game end...');
 			
 			let web3 = new Web3(Web3.givenProvider);
 			var contract = new web3.eth.Contract(abi1, gameContractAddress, {});
 			
 			//Start checking if the game has finished
-			checkGameFinishedInterval = setInterval(async function() {
+			checkGameFinishedInterval2 = setInterval(async function() {
 				
 				let gameFinished = await contract.methods.reqFulfilled(theGameID).call();
-				console.log("Game Finished: ", gameFinished);
 				if (gameFinished) {
-					clearInterval(checkGameFinishedInterval);
-					console.log("Game has finished!");
+					clearInterval(checkGameFinishedInterval2);
 					getEndGameData(theGameID);
 				}
 			}, 15000);

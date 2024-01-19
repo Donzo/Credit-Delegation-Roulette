@@ -289,14 +289,14 @@
 			var slicedObj = data.slice(0, 10);
 			slicedObj += "...";
 			title.innerHTML = "Game Started!";
-			body.innerHTML = `We have <strong>requested a random number</strong> from a Chainlink oracle network. It will take <strong>3 confirmations</strong> to return the results. Please be patient.<br/><br/><strong>Oracle Request ID ${slicedObj} sent!</strong>`;
+			body.innerHTML = `We have <strong>requested a random number</strong> from a Chainlink oracle network. It will take <strong>3 confirmations</strong> to return the results. Please be patient.<br/><br/><strong>Oracle Request ID ${slicedObj} sent!</strong> Click <a href='https://vrf.chain.link/sepolia/8512' target='_blank'>here</a> to check the status of the request.`;
 			//loadingWheel.innerHTML = loader;
 		}
 		else if (num == 11){
 			title.innerHTML = "Waiting for Oracle Return...";
 			var slicedObj = data.slice(0, 10);
 			slicedObj += "...";
-			body.innerHTML = `You are now <strong>starting the game</strong>. Once this transaction has mined, we will request a verifiably random number from a Chainlink DON.<br/><br/><strong>Oracle Request ${slicedObj} has been sent</strong>.`;
+			body.innerHTML = `You are now <strong>starting the game</strong>. Once this transaction has mined, we will request a verifiably random number from a Chainlink DON.<br/><br/><strong>Oracle Request ${slicedObj} has been sent</strong>. Click <a href='https://vrf.chain.link/sepolia/8512' target='_blank'>here</a> to check the status of the request.`;
 			loadingWheel.innerHTML = loader;
 		}
 		else if (num == 12){
@@ -306,7 +306,7 @@
 		}
 		else if (num == 13){
 			title.innerHTML = "Game Started!";
-			body.innerHTML = `Another player has sent that transaction that began the game. The game contract has now <strong>requested a random number</strong> from a Chainlink oracle network. It will take <strong>3 confirmations</strong> to return the results. Please be patient.<br/><br/><strong>Oracle request sent!</strong>`;
+			body.innerHTML = `Another player has sent that transaction that began the game. The game contract has now <strong>requested a random number</strong> from a Chainlink oracle network. It will take <strong>3 confirmations</strong> to return the results. Please be patient.<br/><br/><strong>Oracle request sent!</strong> Click <a href='https://vrf.chain.link/sepolia/8512' target='_blank'>here</a> to check the status of the request.`;
 			loadingWheel.innerHTML = loader;
 		}
 		else if (num == 14){

@@ -64,6 +64,11 @@
 						Address That Will Receive Payment:
 					</div>
 					<div id="pymAddressDisp" class="centerTxt">Enter Address Above</div>
+					
+					<div id="ccipCheckBoxDiv">
+						<input type="checkbox" id="ccipCheckBox" name="ccipCheckBox" value="true">
+						<label for="ccipCheckBox">Use CCIP to Pay the Destination Address on Sepolia Arbitrum?</label>
+					</div>
 				</div>
 			
 				<div class="underline-here">

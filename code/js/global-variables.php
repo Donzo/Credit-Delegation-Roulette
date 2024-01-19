@@ -11,10 +11,11 @@
 		var checkGameStartedInterval = false;
 		var didGameEnd = false;
 		var checkGameFinishedInterval = false;
+		var checkGameFinishedInterval2 = false;
 		var gameOver = false;
 		
 		//Contract Addresses
-		var gameContractAddress = "0x40f0aFC1A72e8e0542D98f19e35Cb310D281C1df";
+		var gameContractAddress = "0x7A7b0a7Fba3D232f7171A492a49f4b478Cf9A5db";
 		var aavePoolContractAddress = "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951";
 		var aGhoDebtTokenContractAddress = "0x67ae46EF043F7A4508BD1d6B94DB6c33F0915844";
 		var wethGatewayContractAddress = "0x387d311e47e80b498169e6fb51d3193167d89F7D";
@@ -49,5 +50,6 @@
 		var oracleReqID = false;
 		var oracleGMID = false;
 		var whichPlayerLost = false;
+		var ccipTransfer = false;
 		
 	</script>

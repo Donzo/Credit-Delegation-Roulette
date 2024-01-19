@@ -455,6 +455,15 @@
 	#lock-player-in-div{
 		min-height: 60px;
 	}
+	/*CCIP Check box*/
+	#ccipCheckBoxDiv{
+		margin-top: .5em;
+		display: flex;
+		justify-content: center;
+	}
+	#ccipCheckBox{
+		margin-right: 1em;
+	}
 	/******************************************
 				SYSTEM MESSAGE BOXES CSS
 	*******************************************/
@@ -492,13 +501,15 @@
 	.sysMsgBoxTitle{
 		font-size: 2.25em;
 		font-weight: 700;
-		margin: 2em;
+		margin: 1.25em 0em .25em;
 		text-align: center;
+		z-index: 101;
 	}
 	.sysMsgBoxBody{
-		margin: 2em;
+		margin: 1.25em 2em .25em;
 		font-weight: 400;
 		font-size: 1.5em;
+		z-index: 100;
 	}
 	#alertBox{
 		display: none;
@@ -514,11 +525,11 @@
 		background: #FFFFFF;
 	}
 	#miningInfoLoadingWheelDiv{
-		max-height: 300px;
+		max-height: 25vh;
 		z-index: -100;
 	}
 	#miningInfoLoadingWheelDiv img{
-		max-height: 300px;
+		max-height: 25vh;
 		z-index: -99;
 	}
 	#eth-input-field{
